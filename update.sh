@@ -86,14 +86,14 @@ update_feeds() {
 
 remove_unwanted_packages() {
     local luci_packages=(
-        "luci-app-passwall" "luci-app-smartdns" "luci-app-ddns-go" "luci-app-rclone"
+        "luci-app-passwall" "luci-app-smartdns" "luci-app-rclone"
         "luci-app-ssr-plus" "luci-app-vssr" "luci-theme-argon" "luci-app-daed" "luci-app-dae"
         "luci-app-alist" "luci-app-argon-config" "luci-app-homeproxy" "luci-app-haproxy-tcp"
         "luci-app-openclash" "luci-app-mihomo" "luci-app-appfilter" "luci-app-msd_lite"
     )
     local packages_net=(
         "haproxy" "xray-core" "xray-plugin" "dns2socks" "alist" "hysteria"
-        "smartdns" "mosdns" "adguardhome" "ddns-go" "naiveproxy" "shadowsocks-rust"
+        "smartdns" "mosdns" "adguardhome" "naiveproxy" "shadowsocks-rust"
         "sing-box" "v2ray-core" "v2ray-geodata" "v2ray-plugin" "tuic-client"
         "chinadns-ng" "ipt2socks" "tcping" "trojan-plus" "simple-obfs"
         "shadowsocksr-libev" "dae" "daed" "mihomo" "geoview" "tailscale" "open-app-filter"
@@ -143,7 +143,7 @@ install_small8() {
         naiveproxy shadowsocks-rust sing-box v2ray-core v2ray-geodata v2ray-geoview v2ray-plugin \
         tuic-client chinadns-ng ipt2socks tcping trojan-plus simple-obfs shadowsocksr-libev \
         luci-app-passwall alist luci-app-alist smartdns luci-app-smartdns v2dat mosdns luci-app-mosdns \
-        adguardhome luci-app-adguardhome ddns-go luci-app-ddns-go taskd luci-lib-xterm luci-lib-taskd \
+        adguardhome luci-app-adguardhome taskd luci-lib-xterm luci-lib-taskd \
         luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
         luci-theme-argon netdata luci-app-netdata lucky luci-app-lucky luci-app-openclash luci-app-homeproxy \
         luci-app-amlogic nikki luci-app-nikki tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf \
@@ -183,6 +183,10 @@ fix_default_set() {
             \cp -f "$BASE_PATH/patches/tempinfo" "$BUILD_DIR/package/emortal/autocore/files/tempinfo"
         fi
     fi
+}
+
+fix_www() {
+    install -Dm755 "$BASE_PATH/patches/998_set_www" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/998_set_www"
 }
 
 fix_miniupnpd() {
@@ -438,7 +442,7 @@ update_nss_pbuf_performance() {
 set_build_signature() {
     local file="$BUILD_DIR/feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js"
     if [ -d "$(dirname "$file")" ] && [ -f $file ]; then
-        sed -i "s/(\(luciversion || ''\))/(\1) + (' \/ build by ZqinKing')/g" "$file"
+        sed -i "s/(\(luciversion || ''\))/(\1) + (' \/ build by yydewf')/g" "$file"
     fi
 }
 
@@ -537,9 +541,6 @@ function add_backup_info_to_sysupgrade() {
 
     if [ -f "$conf_path" ]; then
         cat >"$conf_path" <<'EOF'
-/etc/AdGuardHome.yaml
-/etc/easytier
-/etc/lucky/
 EOF
     fi
 }
@@ -792,6 +793,7 @@ main() {
     update_package "xray-core"
     # update_proxy_app_menu_location
     # update_dns_app_menu_location
+    fix_www
 }
 
 main "$@"
