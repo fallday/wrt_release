@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ -d /data/iptv ] && [ -d /data/epg ]; then
+    /bin/ln -s /data/iptv /www/iptv
+    /bin/ln -s /data/epg /www/epg
+fi
+
+exit 0
